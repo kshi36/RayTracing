@@ -79,16 +79,16 @@ public:
                                     positions[indices[i]][2]));
             t.N.push_back(glm::vec3(normals[indices[i]][0],normals[indices[i]][1],
                                     normals[indices[i]][2]));
-//            i++;
-//            t.P.push_back(glm::vec3(positions[indices[i]][0],positions[indices[i]][1],
-//                                    positions[indices[i]][2]));
-//            t.N.push_back(glm::vec3(normals[indices[i]][0],normals[indices[i]][1],
-//                                    normals[indices[i]][2]));
-//            i++;
-//            t.P.push_back(glm::vec3(positions[indices[i]][0],positions[indices[i]][1],
-//                                    positions[indices[i]][2]));
-//            t.N.push_back(glm::vec3(normals[indices[i]][0],normals[indices[i]][1],
-//                                    normals[indices[i]][2]));
+            i++;
+            t.P.push_back(glm::vec3(positions[indices[i]][0],positions[indices[i]][1],
+                                    positions[indices[i]][2]));
+            t.N.push_back(glm::vec3(normals[indices[i]][0],normals[indices[i]][1],
+                                    normals[indices[i]][2]));
+            i++;
+            t.P.push_back(glm::vec3(positions[indices[i]][0],positions[indices[i]][1],
+                                    positions[indices[i]][2]));
+            t.N.push_back(glm::vec3(normals[indices[i]][0],normals[indices[i]][1],
+                                    normals[indices[i]][2]));
             
             elements.push_back(t);
         }

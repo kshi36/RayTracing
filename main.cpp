@@ -92,11 +92,11 @@ void display(void){
 
         RTscene.buildTriangleSoup();
 
-        std::cout << "Beginning raytracing..." << std::endl;
+//        std::cout << "Beginning raytracing..." << std::endl;
 
-        RayTracer::Raytrace(*(RTscene.camera), RTscene, image);
+//        RayTracer::Raytrace(*(RTscene.camera), RTscene, image);
 
-//        dummyColors(image.pixels);
+        dummyColors(image.pixels);
         std::cout << "drawing image..." << std::endl;
         
         image.draw();

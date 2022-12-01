@@ -15,7 +15,7 @@ struct Ray {
 };
 
 namespace RayTracer {
-void Raytrace(Camera cam, RTScene scene, Image &image);
+    void Raytrace(Camera cam, RTScene scene, Image &image);
     Ray RayThruPixel(Camera cam, int i, int j, int width, int height);
     Intersection Intersect(Ray ray, Triangle triangle);
     Intersection Intersect(Ray ray, RTScene scene);
@@ -23,24 +23,24 @@ void Raytrace(Camera cam, RTScene scene, Image &image);
 };
 
 void RayTracer::Raytrace(Camera cam, RTScene scene, Image &image) {
-    std::cout << "max float: " << std::numeric_limits<float>::max() << std::endl;
-    
-    int w = image.width; int h = image.height;
-    
-    std::cout << "image width: " << w << ", image height: " << h << std::endl;
-     for (int j=0; j<h; j++){
-         for (int i=0; i<w; i++){
+//    std::cout << "max float: " << std::numeric_limits<float>::max() << std::endl;
+//
+//    int w = image.width; int h = image.height;
+//
+//    std::cout << "image width: " << w << ", image height: " << h << std::endl;
+//     for (int j=0; j<h; j++){
+//         for (int i=0; i<w; i++){
 //             std::cout << "Calling RayThruPixel..." << std::endl;
 //             Ray ray = RayThruPixel( cam, i, j, w, h );
 //             std::cout << "Calling Intersect..." << std::endl;
 //             Intersection hit = Intersect( ray, scene );
 //             std::cout << "Calling FindColor..." << std::endl;
 //             image.pixels[j*w + i] = FindColor( hit, 6 );
-             
-             image.pixels[j*w + i] = glm::vec3(0.2f, 0.375f, 0.35f);
-         }
-     }
-    std::cout << "Raytrace finished..." << std::endl;
+//
+//             image.pixels[j*w + i] = glm::vec3(0.2f, 0.375f, 0.35f);
+//         }
+//     }
+//    std::cout << "Raytrace finished..." << std::endl;
 }
 
 Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height) {

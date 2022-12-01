@@ -73,32 +73,30 @@ void RTScene::buildTriangleSoup() {
 //            int count = triangles.size();
             
             std::cout << "Number of triangles for model " << i << ": " << triangles.size() << std::endl;
-            
+                        
             //TODO: Test! skip shaders!
             //transform all triangles from model coordinate to camera coordinate system
-//            for (Triangle tri : triangles) {
-//                mat4 tempVM = cur_VM * (cur -> modeltransforms[i]);
-//
-//                mat3 VM_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
-//                                     tempVM[1][0],tempVM[1][1],tempVM[1][2],
-//                                     tempVM[2][0],tempVM[2][1],tempVM[2][2]);
-//                for (size_t j=0; j<3; j++) {
-//                    //transform positions
-//                    tri.P[j] = VM_block * tri.P[j];
-//
-//                    //transform normals
-//                    tri.N[j] = normalize(inverse(transpose(VM_block)) * normalize(tri.N[j]));
-//                }
-//
-//                //add material to triangle
-//                tri.material = ( cur -> models[i] ) -> material;
-//
-////                std::cout << "Adding triangle" << "..." << std::endl;
-//
-//                triangle_soup.push_back(tri);
-//
+            for (Triangle & tri : triangles) {
+                mat4 tempVM = cur_VM * (cur -> modeltransforms[i]);
+
+                mat3 VM_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
+                                     tempVM[1][0],tempVM[1][1],tempVM[1][2],
+                                     tempVM[2][0],tempVM[2][1],tempVM[2][2]);
+                for (size_t j=0; j<3; j++) {
+                    //transform positions
+                    tri.P[j] = VM_block * tri.P[j];
+
+                    //transform normals
+                    tri.N[j] = normalize(inverse(transpose(VM_block)) * normalize(tri.N[j]));
+                }
+
+                //add material to triangle
+                tri.material = ( cur -> models[i] ) -> material;
+
+                triangle_soup.push_back(tri);
+
 //                std::cout << "Added triangle" << "." << std::endl;
-//            }
+            }
             
             std::cout << "Finished adding triangles for model " << i << std::endl;
         }

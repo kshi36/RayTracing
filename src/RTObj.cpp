@@ -108,12 +108,12 @@ void RTObj::init(const char * filename){
         //triangle positions & normals
         t.P.push_back(vertices[indices[i]]);
         t.N.push_back(normals[indices[i]]);
-//        i++;
-//        t.P.push_back(vertices[indices[i]]);
-//        t.N.push_back(normals[indices[i]]);
-//        i++;
-//        t.P.push_back(vertices[indices[i]]);
-//        t.N.push_back(normals[indices[i]]);
+        i++;
+        t.P.push_back(vertices[indices[i]]);
+        t.N.push_back(normals[indices[i]]);
+        i++;
+        t.P.push_back(vertices[indices[i]]);
+        t.N.push_back(normals[indices[i]]);
         
         elements.push_back(t);
     }
