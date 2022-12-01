@@ -59,6 +59,7 @@ void RTScene::buildTriangleSoup() {
         
         //join triangle lists from all the models at the current node
         for ( size_t i = 0; i < cur -> models.size(); i++ ){
+            std::cout << "value of i: " << i << std::endl;
 //            // Prepare to draw the geometry. Assign the modelview and the material.
 //            shader -> modelview = cur_VM * (cur -> modeltransforms[i]);
 //            shader -> material  = ( cur -> models[i] ) -> material;
@@ -69,30 +70,37 @@ void RTScene::buildTriangleSoup() {
             
             //add triangles to triangle soup (transformed)
             std::vector<Triangle> triangles = ( cur -> models[i] ) -> geometry -> elements;
-            int count = triangles.size();
+//            int count = triangles.size();
+            
+            std::cout << "Number of triangles for model " << i << ": " << triangles.size() << std::endl;
             
             //TODO: Test! skip shaders!
             //transform all triangles from model coordinate to camera coordinate system
-            for (size_t t=0; t<count; t++) {
-                mat4 tempVM = cur_VM * (cur -> modeltransforms[i]);
-                mat3 VM_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
-                                     tempVM[1][0],tempVM[1][1],tempVM[1][2],
-                                     tempVM[2][0],tempVM[2][1],tempVM[2][2]);
-                for (size_t j=0; j<3; j++) {
-                    //transform positions
-                    triangles[t].P[j] = VM_block * triangles[t].P[j];
-                    
-                    //transform normals
-                    triangles[t].N[j] = normalize(inverse(transpose(VM_block)) * normalize(triangles[t].N[j]));
-                }
-                
-                //add material to triangle
-                triangles[t].material = ( cur -> models[i] ) -> material;
-                
-                std::cout << "Adding triangle " << t << "..." << std::endl;
-                
-                triangle_soup.push_back(triangles[t]);
-            }
+//            for (Triangle tri : triangles) {
+//                mat4 tempVM = cur_VM * (cur -> modeltransforms[i]);
+//
+//                mat3 VM_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
+//                                     tempVM[1][0],tempVM[1][1],tempVM[1][2],
+//                                     tempVM[2][0],tempVM[2][1],tempVM[2][2]);
+//                for (size_t j=0; j<3; j++) {
+//                    //transform positions
+//                    tri.P[j] = VM_block * tri.P[j];
+//
+//                    //transform normals
+//                    tri.N[j] = normalize(inverse(transpose(VM_block)) * normalize(tri.N[j]));
+//                }
+//
+//                //add material to triangle
+//                tri.material = ( cur -> models[i] ) -> material;
+//
+////                std::cout << "Adding triangle" << "..." << std::endl;
+//
+//                triangle_soup.push_back(tri);
+//
+//                std::cout << "Added triangle" << "." << std::endl;
+//            }
+            
+            std::cout << "Finished adding triangles for model " << i << std::endl;
         }
         
         // Continue the DFS: put all the child nodes of the current node in the stack

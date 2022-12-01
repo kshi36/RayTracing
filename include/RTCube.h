@@ -97,7 +97,6 @@ public:
 //        glBindVertexArray(0);
     }
     
-    
 };
 
 #endif 
