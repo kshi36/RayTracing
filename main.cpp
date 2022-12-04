@@ -92,7 +92,6 @@ void display(void){
         //TODO: test raytracing
         RTscene.buildTriangleSoup();
 
-//        std::cout << "Beginning raytracing..." << std::endl;
         RayTracer::Raytrace(RTscene.camera, RTscene, image);
 
 //        dummyColors(image.pixels);
