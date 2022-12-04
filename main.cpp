@@ -18,8 +18,10 @@
 #include "Image.h"
 #include "Ray.h"
 
-static int width = 800;
-static int height = 600;
+//static int width = 800;
+//static int height = 600;
+static int width = 100;
+static int height = 75;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static Scene scene;
@@ -88,15 +90,12 @@ void display(void){
     //check if on ray tracing mode
     if (RT_mode) {
         //TODO: test raytracing
-        std::cout << "Beginning building triangle soup..." << std::endl;
-
         RTscene.buildTriangleSoup();
 
 //        std::cout << "Beginning raytracing..." << std::endl;
+        RayTracer::Raytrace(RTscene.camera, RTscene, image);
 
-//        RayTracer::Raytrace(*(RTscene.camera), RTscene, image);
-
-        dummyColors(image.pixels);
+//        dummyColors(image.pixels);
         std::cout << "drawing image..." << std::endl;
         
         image.draw();

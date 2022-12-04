@@ -9,11 +9,11 @@ Image::Image(const int width, const int height) {
 }
 
 void Image::init() {
-    glGenFramebuffers(1,&fbo);
-    glGenTextures(1,&tbo);
-    
     //initialize size of pixels
     pixels = std::vector<glm::vec3>(width*height);
+    
+    glGenFramebuffers(1,&fbo);
+    glGenTextures(1,&tbo);
 }
 
 void Image::draw() {

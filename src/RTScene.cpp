@@ -26,6 +26,9 @@ void RTScene::buildTriangleSoup() {
 //        count++;
 //    }
     
+    // reset triangle_soup
+    triangle_soup.clear();
+    
     // Define stacks for depth-first search (DFS)
     std::stack < RTNode* > dfs_stack;
     std::stack < mat4 >  matrix_stack;
@@ -40,11 +43,18 @@ void RTScene::buildTriangleSoup() {
     // Compute total number of connectivities in the graph; this would be an upper bound for
     // the stack size in the depth first search over the directed acyclic graph
     int total_number_of_edges = 0;
-    for ( const auto &n : node ) total_number_of_edges += n.second->childnodes.size();
+
+    for ( const auto &n : node ) {
+        total_number_of_edges += n.second->childnodes.size();
+        
+//        std::cout << "childnodes size: " << n.second->childnodes.size() << std::endl;
+//        std::cout << "total number of edges = " << total_number_of_edges << std::endl;
+    }
     
     // If you want to print some statistics of your scene graph
-     std::cout << "total numb of nodes = " << node.size() << std::endl;
-     std::cout << "total number of edges = " << total_number_of_edges << std::endl;
+    std::cout << "total numb of nodes = " << node.size() << std::endl;
+    std::cout << "total number of edges = " << total_number_of_edges << std::endl;
+    std::cout << "triangle_soup size: " << triangle_soup.size() << std::endl;
     
     while( ! dfs_stack.empty() ){
         // Detect whether the search runs into infinite loop by checking whether the stack is longer than the number of edges in the graph.
@@ -57,9 +67,10 @@ void RTScene::buildTriangleSoup() {
         cur = dfs_stack.top();  dfs_stack.pop();
         cur_VM = matrix_stack.top();  matrix_stack.pop();
         
+//        std::cout << "cur models.size: " << cur -> models.size() << std::endl;
+        
         //join triangle lists from all the models at the current node
         for ( size_t i = 0; i < cur -> models.size(); i++ ){
-            std::cout << "value of i: " << i << std::endl;
 //            // Prepare to draw the geometry. Assign the modelview and the material.
 //            shader -> modelview = cur_VM * (cur -> modeltransforms[i]);
 //            shader -> material  = ( cur -> models[i] ) -> material;
@@ -72,11 +83,11 @@ void RTScene::buildTriangleSoup() {
             std::vector<Triangle> triangles = ( cur -> models[i] ) -> geometry -> elements;
 //            int count = triangles.size();
             
-            std::cout << "Number of triangles for model " << i << ": " << triangles.size() << std::endl;
+//            std::cout << "Number of triangles for model " << i << ": " << triangles.size() << std::endl;
                         
             //TODO: Test! skip shaders!
             //transform all triangles from model coordinate to camera coordinate system
-            for (Triangle & tri : triangles) {
+            for (Triangle &tri : triangles) {
                 mat4 tempVM = cur_VM * (cur -> modeltransforms[i]);
 
                 mat3 VM_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
@@ -94,11 +105,9 @@ void RTScene::buildTriangleSoup() {
                 tri.material = ( cur -> models[i] ) -> material;
 
                 triangle_soup.push_back(tri);
-
-//                std::cout << "Added triangle" << "." << std::endl;
             }
             
-            std::cout << "Finished adding triangles for model " << i << std::endl;
+//            std::cout << "Finished adding triangles for model " << i << std::endl;
         }
         
         // Continue the DFS: put all the child nodes of the current node in the stack
@@ -110,6 +119,8 @@ void RTScene::buildTriangleSoup() {
     } // End of DFS while loop.
     
     std::cout << "Finished building triangle soup." << std::endl;
+    std::cout << "triangle_soup size: " << triangle_soup.size() << std::endl;
+
 }
 
 
