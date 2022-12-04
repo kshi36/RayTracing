@@ -87,7 +87,7 @@ void RTScene::buildTriangleSoup() {
                         
             //TODO: Test! skip shaders!
             //transform all triangles from model coordinate to camera coordinate system
-            for (Triangle &tri : triangles) {
+            for (Triangle tri : triangles) {
                 mat4 tempVM = cur_VM * (cur -> modeltransforms[i]);
 
                 mat3 VM_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
