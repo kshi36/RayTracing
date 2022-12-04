@@ -62,7 +62,7 @@ Ray RayTracer::RayThruPixel(Camera *cam, int i, int j, int width, int height) {
     Ray ray;
     //in world coordinate system!
     ray.p0 = cam->eye;
-    ray.dir = glm::normalize(alpha*cam->aspect*glm::tan((cam->fovy)/2.0f)*u + beta*glm::tan((cam->fovy)/2.0f)*v - w);
+    ray.dir = glm::normalize(alpha*cam->aspect*glm::tan((cam->fovy)/2)*u + beta*glm::tan((cam->fovy)/2)*v - w);
     
     //in camera coordinate system!
 //    ray.p0 = glm::vec3(0.0f,0.0f,0.0f);
@@ -83,22 +83,22 @@ Intersection RayTracer::Intersect(Ray &ray, Triangle &triangle) {
                                            glm::vec4(-ray.dir, 0.0f)
                                            )) * glm::vec4(ray.p0, 1.0f);
     
-    std::cout << "res: " << glm::to_string(res) << std::endl;
+//    std::cout << "res: " << glm::to_string(res) << std::endl;
 
     Intersection intersect;
     intersect.P = res[0]*triangle.P[0] + res[1]*triangle.P[1] + res[2]*triangle.P[2];
     intersect.N = glm::normalize(res[0]*triangle.N[0] + res[1]*triangle.N[1] + res[2]*triangle.N[2]);
     intersect.V = -ray.dir;
     intersect.triangle = &triangle;
-    //TODO: check no intersection hit?
+    //check no intersection hit?
     if (res[0] < 0 || res[1] < 0 || res[2] < 0 || res[3] < 0) {
         intersect.dist = MY_INFINITY;
-        std::cout << "NO INTERSECTION!" << std::endl;
+//        std::cout << "NO INTERSECTION!" << std::endl;
 //        std::cout << "no intersect dist: " << intersect.dist << std::endl;
     }
     else {
         intersect.dist = res[3];
-        std::cout << "YES INTERSECTION!" << std::endl;
+//        std::cout << "YES INTERSECTION!" << std::endl;
 //        std::cout << "intersect dist: " << intersect.dist << std::endl;
     }
     return intersect;
@@ -114,36 +114,31 @@ Intersection RayTracer::Intersect(Ray &ray, RTScene &scene) {
         
 //        std::cout << "hit_temp dist: " << hit_temp.dist << std::endl;
         
-        //TODO: remove test
-//        if (eq_float(hit_temp.dist, MY_INFINITY)) {
-//            std::cout << "blood" << std::endl;
-//        }
-
         if (hit_temp.dist < mindist) { // closer than previous hit
             mindist = hit_temp.dist;
             hit = hit_temp;
         }
     }
     
-    std::cout << "hit dist: " << hit.dist << std::endl;
-    
-    if (eq_float(hit.dist, MY_INFINITY)) {
-        std::cout << "hell" << std::endl;
-    }
+//    std::cout << "hit dist: " << hit.dist << std::endl;
+//    if (eq_float(hit.dist, MY_INFINITY)) {
+//        std::cout << "hell" << std::endl;
+//    }
     return hit;
 }
 
 //TODO: simple color = lambert's cosine law?, or ambient+lambertian-diffuse+blinn-phong (hw3)
 glm::vec3 RayTracer::FindColor(Intersection &hit, int recursion_depth) {
-    float testINF = MY_INFINITY;
-//    std::cout << "test inf constant: " << (eq_float(testINF, MY_INFINITY)) << " (should be 1?)" << std::endl;
-    //TODO: check if intersection exists
-    if (eq_float(hit.dist, MY_INFINITY)) {     //intersection doesn't exist (infinity)
-        std::cout << "background" << std::endl;
+    //intersection doesn't exist (infinity)
+    if (eq_float(hit.dist, MY_INFINITY)) {
+//        std::cout << "background" << std::endl;
         return glm::vec3(0.1f, 0.2f, 0.3f); //background color
     }
     
-    std::cout << "black" << std::endl;
+    //TODO: add shadow when intersection hit is btwn light source and scene
+    
+    //TODO: add light on intersection hit
+//    std::cout << "black" << std::endl;
 //    return glm::vec3(1.0f, 1.0f, 1.0f); //white
     return glm::vec3(0.0f, 0.0f, 0.0f); //black
 }

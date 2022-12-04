@@ -5,6 +5,8 @@ Scene.cpp contains the implementation of the draw command
 #include "RTCube.h"
 #include "RTObj.h"
 
+#include <glm/gtx/string_cast.hpp>
+
 // The scene init definition 
 #include "RTScene.inl"
 
@@ -62,14 +64,18 @@ void RTScene::buildTriangleSoup() {
             //transform all triangles from model coordinate to same coordinate system
             for (Triangle tri : triangles) {
                 //in world coordinate system
-                mat4 tempVM = cur_M * (cur -> modeltransforms[i]);
-                mat3 M_block = mat3(tempVM[0][0],tempVM[0][1],tempVM[0][2],
-                                     tempVM[1][0],tempVM[1][1],tempVM[1][2],
-                                     tempVM[2][0],tempVM[2][1],tempVM[2][2]);
+                mat4 tempMatrix = cur_M * (cur -> modeltransforms[i]);
+                mat3 M_block = mat3(tempMatrix[0][0],tempMatrix[0][1],tempMatrix[0][2],
+                                     tempMatrix[1][0],tempMatrix[1][1],tempMatrix[1][2],
+                                     tempMatrix[2][0],tempMatrix[2][1],tempMatrix[2][2]);
 
                 for (size_t j=0; j<3; j++) {
+                    vec4 tempPos = tempMatrix * vec4(tri.P[j], 1.0f);
+                    
+                    std::cout << "tempPos[" << j << "]: " << glm::to_string(tempPos) << std::endl;
+                    
                     //transform positions
-                    tri.P[j] = M_block * tri.P[j];
+                    tri.P[j] = vec3(tempPos[0]/tempPos[3], tempPos[1]/tempPos[3], tempPos[2]/tempPos[3]);
 
                     //transform normals
                     tri.N[j] = normalize(inverse(transpose(M_block)) * normalize(tri.N[j]));
