@@ -23,7 +23,7 @@ namespace RayTracer {
     Ray RayThruPixel(Camera *cam, int i, int j, int width, int height);
     Intersection Intersect(Ray &ray, Triangle &triangle);
     Intersection Intersect(Ray &ray, RTScene &scene);
-    glm::vec3 FindColor(Intersection &hit, int recursion_depth);
+    glm::vec3 FindColor(Intersection &hit, RTScene &scene, int recursion_depth);
 };
 
 bool eq_float(float x, float y, float epsilon=0.01f) {
@@ -41,20 +41,28 @@ void RayTracer::Raytrace(Camera *cam, RTScene &scene, Image &image) {
 //    std::cout << "image width: " << w << ", image height: " << h << std::endl;
      for (int j=0; j<h; j++){
          for (int i=0; i<w; i++){
+             
+             if (i==40 && j==40) {
+                 image.pixels[j*w + i] = glm::vec3(1.0f,1.0f,0.0f); //yellow
+                 continue;
+             }
+             
              Ray ray = RayThruPixel( cam, i, j, w, h );
              Intersection hit = Intersect( ray, scene );
 //             std::cout << "Calling FindColor..." << std::endl;
 //             std::cout << "pixel " << (j*w+i) << " is color: ";
-             image.pixels[j*w + i] = FindColor( hit, 6 );
+             image.pixels[j*w + i] = FindColor( hit, scene, 6 );
          }
      }
     std::cout << "Raytrace finished..." << std::endl;
 }
 
 Ray RayTracer::RayThruPixel(Camera *cam, int i, int j, int width, int height) {
-    float alpha = (2.0f*(i+0.5f)/width)-1.0f;
-    float beta = 1.0f-(2.0f*(j+0.5f)/height);
-    
+    float alpha = 2*((i+0.5f)/width)-1;
+    float beta = 1-(2*((j+0.5f)/height));
+//    float alpha = (i+0.5f)/width-0.5f;
+//    float beta = (j+0.5f)/height-0.5f;
+
     glm::vec3 w = glm::normalize(cam->eye - cam->target);
     glm::vec3 u = glm::normalize(glm::cross(cam->up, w));
     glm::vec3 v = glm::normalize(glm::cross(w, u));
@@ -62,6 +70,7 @@ Ray RayTracer::RayThruPixel(Camera *cam, int i, int j, int width, int height) {
     Ray ray;
     //in world coordinate system!
     ray.p0 = cam->eye;
+//    ray.p0 = cam->target + 0.4f * (cam->eye - cam->target);
     ray.dir = glm::normalize(alpha*cam->aspect*glm::tan((cam->fovy)/2)*u + beta*glm::tan((cam->fovy)/2)*v - w);
     
     //in camera coordinate system!
@@ -73,8 +82,6 @@ Ray RayTracer::RayThruPixel(Camera *cam, int i, int j, int width, int height) {
 }
 
 Intersection RayTracer::Intersect(Ray &ray, Triangle &triangle) {
-//    std::cout << "ray.p0: " << glm::to_string(ray.p0) << ", ray.dir: " << glm::to_string(ray.dir) << std::endl;
-
     //lambda 1,2,3 and t
     glm::vec4 res = glm::inverse(glm::mat4(
                                            glm::vec4(triangle.P[0], 1.0f),
@@ -88,6 +95,8 @@ Intersection RayTracer::Intersect(Ray &ray, Triangle &triangle) {
     Intersection intersect;
     intersect.P = res[0]*triangle.P[0] + res[1]*triangle.P[1] + res[2]*triangle.P[2];
     intersect.N = glm::normalize(res[0]*triangle.N[0] + res[1]*triangle.N[1] + res[2]*triangle.N[2]);
+    
+    //TODO: incorrect?
     intersect.V = -ray.dir;
     intersect.triangle = &triangle;
     //check no intersection hit?
@@ -128,7 +137,7 @@ Intersection RayTracer::Intersect(Ray &ray, RTScene &scene) {
 }
 
 //TODO: simple color = lambert's cosine law?, or ambient+lambertian-diffuse+blinn-phong (hw3)
-glm::vec3 RayTracer::FindColor(Intersection &hit, int recursion_depth) {
+glm::vec3 RayTracer::FindColor(Intersection &hit, RTScene &scene, int recursion_depth) {
     //intersection doesn't exist (infinity)
     if (eq_float(hit.dist, MY_INFINITY)) {
 //        std::cout << "background" << std::endl;
@@ -140,7 +149,52 @@ glm::vec3 RayTracer::FindColor(Intersection &hit, int recursion_depth) {
     //TODO: add light on intersection hit
 //    std::cout << "black" << std::endl;
 //    return glm::vec3(1.0f, 1.0f, 1.0f); //white
-    return glm::vec3(0.0f, 0.0f, 0.0f); //black
+    
+    glm::vec4 fragColor = hit.triangle->material->emision;
+    
+    for ( std::pair<std::string, Light*> light : scene.light ) {
+        
+        glm::vec3 l_vec = normalize(glm::vec3(((light.second)->position)[0],
+                                              ((light.second)->position)[1],
+                                              ((light.second)->position)[2])
+                                    - ((light.second)->position)[3]*hit.P);
+        
+        glm::vec3 half_vec = normalize(hit.V + l_vec);
+        
+//        float dot_diffuse = glm::dot(hit.N, l_vec);
+//        float dot_specular = glm::dot(hit.N, half_vec);
+        
+        fragColor += ((light.second)->color *
+                      (hit.triangle->material->ambient +
+                       (hit.triangle->material->diffuse)*glm::max(glm::dot(hit.N, l_vec),0.0f) +
+                       (hit.triangle->material->specular)*pow((glm::max(glm::dot(hit.N, half_vec),0.0f)), hit.triangle->material->shininess)
+                       ));
+    }
+    return glm::vec3(fragColor);
+//    return glm::vec3(0.0f, 0.0f, 0.0f); //black
 }
+
+//glm::vec3 RayTracer::FindColor(Intersection &hit, int recursion_depth) {
+//    //intersection doesn't exist (infinity)
+//    if (eq_float(hit.dist, MY_INFINITY)) {
+////        std::cout << "background" << std::endl;
+//        return glm::vec3(0.1f, 0.2f, 0.3f); //background color
+//    }
+//
+//    //generate secondary rays to all lights
+//    color = Visible? ShadingModel : 0;
+//    ray2 = //TODO: Generate mirror-reflected ray
+//
+//    hit2 = Intersect( ray2, scene );
+//    color += specular * FindColor( hit2 );
+//
+//    //TODO: add shadow when intersection hit is btwn light source and scene
+//
+//    //TODO: add light on intersection hit
+////    std::cout << "black" << std::endl;
+////    return glm::vec3(1.0f, 1.0f, 1.0f); //white
+//    return glm::vec3(0.0f, 0.0f, 0.0f); //black
+//}
+
 
 #endif

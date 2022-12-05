@@ -46,7 +46,7 @@ public:
     std::map< std::string, RTNode* > node;
     
     //triangle soup
-    std::vector<Triangle> triangle_soup;  //list of triangles in the camera coordinate
+    std::vector<Triangle> triangle_soup;  //list of triangles in the world coordinate
     
     RTScene(){
         // the default scene graph already has one node named "world."

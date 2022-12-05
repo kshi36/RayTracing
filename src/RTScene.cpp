@@ -72,7 +72,7 @@ void RTScene::buildTriangleSoup() {
                 for (size_t j=0; j<3; j++) {
                     vec4 tempPos = tempMatrix * vec4(tri.P[j], 1.0f);
                     
-                    std::cout << "tempPos[" << j << "]: " << glm::to_string(tempPos) << std::endl;
+//                    std::cout << "tempPos[" << j << "]: " << glm::to_string(tempPos) << std::endl;
                     
                     //transform positions
                     tri.P[j] = vec3(tempPos[0]/tempPos[3], tempPos[1]/tempPos[3], tempPos[2]/tempPos[3]);
