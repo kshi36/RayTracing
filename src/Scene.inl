@@ -9,10 +9,10 @@ using namespace glm;
 void Scene::init(void){
     // Create a geometry palette
     geometry["cube"] = new Cube;
-//    geometry["teapot"] = new Obj;
+    geometry["teapot"] = new Obj;
 //    geometry["bunny"] = new Obj;
     geometry["cube"] -> init();
-//    geometry["teapot"] -> init("models/teapot.obj");
+    geometry["teapot"] -> init("models/teapot.obj");
 //    geometry["bunny"] -> init("models/bunny.obj");
     
     // Create a material palette
@@ -40,6 +40,12 @@ void Scene::init(void){
     material["turquoise"] -> specular = vec4(0.3f, 0.3f, 0.3f, 1.0f);
     material["turquoise"] -> shininess = 100.0f;
     
+    material["pink"] = new Material;
+    material["pink"] -> ambient = vec4(0.2f, 0.07f, 0.2f, 1.0f);
+    material["pink"] -> diffuse = vec4(0.13f, 0.35f, 0.3f, 1.0f);
+    material["pink"] -> specular = vec4(0.9f, 0.6f, 0.6f, 1.0f);
+    material["pink"] -> shininess = 100.0f;
+    
     material["bulb"] = new Material;
     material["bulb"] -> ambient = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     material["bulb"] -> diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -48,12 +54,12 @@ void Scene::init(void){
     material["bulb"] -> shininess = 200.0f;
     
     // Create a model palette
-//    model["teapot1"] = new Model;
-//    model["teapot1"] -> geometry = geometry["teapot"];
-//    model["teapot1"] -> material = material["silver"];
-//    model["teapot2"] = new Model;
-//    model["teapot2"] -> geometry = geometry["teapot"];
-//    model["teapot2"] -> material = material["ceramic"];
+    model["teapot1"] = new Model;
+    model["teapot1"] -> geometry = geometry["teapot"];
+    model["teapot1"] -> material = material["pink"];
+    model["teapot2"] = new Model;
+    model["teapot2"] -> geometry = geometry["teapot"];
+    model["teapot2"] -> material = material["ceramic"];
     model["table piece"] = new Model;
     model["table piece"] -> geometry = geometry["cube"];
     model["table piece"] -> material = material["wood"];
@@ -77,8 +83,8 @@ void Scene::init(void){
     node["table"] = new Node;
     node["table top"] = new Node;
     node["table leg"] = new Node;
-//    node["teapot1"] = new Node;
-//    node["teapot2"] = new Node;
+    node["teapot1"] = new Node;
+    node["teapot2"] = new Node;
 //    node["bunny"] = new Node;
     
     
@@ -98,15 +104,15 @@ void Scene::init(void){
     
     node["table top"] -> models.push_back( model["table piece"] );
     node["table top"] -> modeltransforms.push_back( translate(vec3(0.0f,-0.1f,0.0f)) * scale(vec3(2.0f,0.2f,1.0f)) );
-//    node["table top"] -> childnodes.push_back( node["teapot1"] );
-//    node["table top"] -> childtransforms.push_back( translate(vec3(-0.5f,0.0f,0.0f)) );
-//    node["table top"] -> childnodes.push_back( node["teapot2"] );
-//    node["table top"] -> childtransforms.push_back( translate(vec3( 0.5f,0.0f,0.0f)) * rotate( -120.0f*float(M_PI)/180.0f, vec3(0.0f, 1.0f, 0.0f) ) );
+    node["table top"] -> childnodes.push_back( node["teapot1"] );
+    node["table top"] -> childtransforms.push_back( translate(vec3(-0.5f,0.0f,0.0f)) );
+    node["table top"] -> childnodes.push_back( node["teapot2"] );
+    node["table top"] -> childtransforms.push_back( translate(vec3( 0.5f,0.0f,0.0f)) * rotate( -120.0f*float(M_PI)/180.0f, vec3(0.0f, 1.0f, 0.0f) ) );
     
-//    node["teapot1"] -> models.push_back( model["teapot1"] );
-//    node["teapot1"] -> modeltransforms.push_back( scale(vec3(0.5f)) );
-//    node["teapot2"] -> models.push_back( model["teapot2"] );
-//    node["teapot2"] -> modeltransforms.push_back( scale(vec3(1.0f,1.5f,1.0f)) * scale(vec3(0.5f)) );
+    node["teapot1"] -> models.push_back( model["teapot1"] );
+    node["teapot1"] -> modeltransforms.push_back( scale(vec3(0.5f)) );
+    node["teapot2"] -> models.push_back( model["teapot2"] );
+    node["teapot2"] -> modeltransforms.push_back( scale(vec3(1.0f,1.5f,1.0f)) * scale(vec3(0.5f)) );
     
 //    node["bunny"] -> models.push_back( model["bunny"] );
 //    node["bunny"] -> modeltransforms.push_back( scale(vec3(0.8f)) * translate(vec3(0.0f,1.0f,0.0f)) );

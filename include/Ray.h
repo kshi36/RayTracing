@@ -32,9 +32,7 @@ bool eq_float(float x, float y, float epsilon=0.01f) {
 }
 
 void RayTracer::Raytrace(Camera *cam, RTScene &scene, Image &image) {
-//    std::cout << "Camera eye: " << cam->eye[2] << std::endl;
-//    std::cout << "max float (infinity()): " << std::numeric_limits<float>::infinity() << std::endl;
-//    std::cout << "max float (max()): " << std::numeric_limits<float>::max() << std::endl;
+//    std::cout << "Camera eye: " << glm::to_string(cam->eye) << std::endl;
 
     int w = image.width; int h = image.height;
 
@@ -42,16 +40,15 @@ void RayTracer::Raytrace(Camera *cam, RTScene &scene, Image &image) {
      for (int j=0; j<h; j++){
          for (int i=0; i<w; i++){
              
-             if (i==40 && j==40) {
-                 image.pixels[j*w + i] = glm::vec3(1.0f,1.0f,0.0f); //yellow
-                 continue;
-             }
+//             if (i==0 && j==40) {
+//                 image.pixels[j*w + i] = glm::vec3(1.0f,1.0f,0.0f); //yellow
+//                 continue;
+//             }
              
              Ray ray = RayThruPixel( cam, i, j, w, h );
              Intersection hit = Intersect( ray, scene );
-//             std::cout << "Calling FindColor..." << std::endl;
 //             std::cout << "pixel " << (j*w+i) << " is color: ";
-             image.pixels[j*w + i] = FindColor( hit, scene, 6 );
+             image.pixels[j*w + i] = FindColor( hit, scene, 4 );
          }
      }
     std::cout << "Raytrace finished..." << std::endl;
@@ -70,8 +67,7 @@ Ray RayTracer::RayThruPixel(Camera *cam, int i, int j, int width, int height) {
     Ray ray;
     //in world coordinate system!
     ray.p0 = cam->eye;
-//    ray.p0 = cam->target + 0.4f * (cam->eye - cam->target);
-    ray.dir = glm::normalize(alpha*cam->aspect*glm::tan((cam->fovy)/2)*u + beta*glm::tan((cam->fovy)/2)*v - w);
+    ray.dir = glm::normalize((alpha*(cam->aspect)*glm::tan((cam->fovy)/2)*u) + (beta*glm::tan((cam->fovy)/2)*v) - w);
     
     //in camera coordinate system!
 //    ray.p0 = glm::vec3(0.0f,0.0f,0.0f);
@@ -136,7 +132,6 @@ Intersection RayTracer::Intersect(Ray &ray, RTScene &scene) {
     return hit;
 }
 
-//TODO: simple color = lambert's cosine law?, or ambient+lambertian-diffuse+blinn-phong (hw3)
 glm::vec3 RayTracer::FindColor(Intersection &hit, RTScene &scene, int recursion_depth) {
     //intersection doesn't exist (infinity)
     if (eq_float(hit.dist, MY_INFINITY)) {
@@ -144,57 +139,51 @@ glm::vec3 RayTracer::FindColor(Intersection &hit, RTScene &scene, int recursion_
         return glm::vec3(0.1f, 0.2f, 0.3f); //background color
     }
     
-    //TODO: add shadow when intersection hit is btwn light source and scene
-    
-    //TODO: add light on intersection hit
-//    std::cout << "black" << std::endl;
-//    return glm::vec3(1.0f, 1.0f, 1.0f); //white
-    
-    glm::vec4 fragColor = hit.triangle->material->emision;
+    //add light on intersection hit
+    glm::vec3 fragColor = glm::vec3(hit.triangle->material->emision);
     
     for ( std::pair<std::string, Light*> light : scene.light ) {
         
-        glm::vec3 l_vec = normalize(glm::vec3(((light.second)->position)[0],
+        glm::vec3 l_vec = glm::normalize(glm::vec3(((light.second)->position)[0],
                                               ((light.second)->position)[1],
                                               ((light.second)->position)[2])
                                     - ((light.second)->position)[3]*hit.P);
         
-        glm::vec3 half_vec = normalize(hit.V + l_vec);
+        glm::vec3 half_vec = glm::normalize(hit.V + l_vec);
         
-//        float dot_diffuse = glm::dot(hit.N, l_vec);
-//        float dot_specular = glm::dot(hit.N, half_vec);
-        
-        fragColor += ((light.second)->color *
-                      (hit.triangle->material->ambient +
-                       (hit.triangle->material->diffuse)*glm::max(glm::dot(hit.N, l_vec),0.0f) +
-                       (hit.triangle->material->specular)*pow((glm::max(glm::dot(hit.N, half_vec),0.0f)), hit.triangle->material->shininess)
+        //generate secondary rays to all lights, add shadow when there is hit btwn light source and a scene object
+        float visible = 1.0f;
+        Ray shadowray;
+        shadowray.p0 = hit.P + 0.1f * hit.N;        //jitter hit pos along unit normal of hit triangle
+        shadowray.dir = glm::normalize(glm::vec3(((light.second)->position)[0],
+                                           ((light.second)->position)[1],
+                                           ((light.second)->position)[2]) - shadowray.p0);
+        //obstructed by a scene object (towards light)
+        Intersection shadowhit = Intersect(shadowray, scene);
+        if (!eq_float(shadowhit.dist, MY_INFINITY)) {
+//            std::cout << "not visible!" << std::endl;
+            visible = 0.0f;
+        }
+                
+        fragColor += glm::vec3((light.second)->color *   //light source color
+                      (hit.triangle->material->ambient +    //ambient
+                       (hit.triangle->material->diffuse)*glm::max(glm::dot(hit.N, l_vec),0.0f)*visible    //diffuse
+//                       + (hit.triangle->material->specular)*pow((glm::max(glm::dot(hit.N, half_vec),0.0f)), hit.triangle->material->shininess)    //specular (Blinn-Phong model)
                        ));
+        fragColor += glm::vec3((light.second)->color * ((hit.triangle->material->specular)*pow((glm::max(glm::dot(hit.N, half_vec),0.0f)), hit.triangle->material->shininess)));  //specular (Blinn-Phong model)
+        
+        //TODO: generate mirror-reflected ray
+//        Ray ray2;
+//        ray2.p0 = hit.P;
+//        ray2.dir = glm::normalize(2.0f*glm::dot(hit.N, hit.V)*hit.N - hit.V);   //mirror reflection direction
+//
+//        Intersection hit2 = Intersect( ray2, scene );
+//        fragColor += glm::vec3(hit.triangle->material->specular) * FindColor( hit2, scene, recursion_depth-1 );
     }
+    
     return glm::vec3(fragColor);
 //    return glm::vec3(0.0f, 0.0f, 0.0f); //black
 }
-
-//glm::vec3 RayTracer::FindColor(Intersection &hit, int recursion_depth) {
-//    //intersection doesn't exist (infinity)
-//    if (eq_float(hit.dist, MY_INFINITY)) {
-////        std::cout << "background" << std::endl;
-//        return glm::vec3(0.1f, 0.2f, 0.3f); //background color
-//    }
-//
-//    //generate secondary rays to all lights
-//    color = Visible? ShadingModel : 0;
-//    ray2 = //TODO: Generate mirror-reflected ray
-//
-//    hit2 = Intersect( ray2, scene );
-//    color += specular * FindColor( hit2 );
-//
-//    //TODO: add shadow when intersection hit is btwn light source and scene
-//
-//    //TODO: add light on intersection hit
-////    std::cout << "black" << std::endl;
-////    return glm::vec3(1.0f, 1.0f, 1.0f); //white
-//    return glm::vec3(0.0f, 0.0f, 0.0f); //black
-//}
 
 
 #endif
