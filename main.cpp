@@ -20,8 +20,8 @@
 
 //static int width = 800;
 //static int height = 600;
-static int width = 200;
-static int height = 150;
+static int width = 100;
+static int height = 75;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static Scene scene;
