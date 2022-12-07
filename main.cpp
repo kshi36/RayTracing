@@ -20,8 +20,8 @@
 
 //static int width = 800;
 //static int height = 600;
-static int width = 100;
-static int height = 75;
+static int width = 120;
+static int height = 90;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static Scene scene;
@@ -89,17 +89,13 @@ void display(void){
     
     //check if on ray tracing mode
     if (RT_mode) {
-        //TODO: test raytracing
+        //build the scene full of triangles
         RTscene.buildTriangleSoup();
 
+        //ray tracing algorithm
         RayTracer::Raytrace(RTscene.camera, RTscene, image);
-
-//        dummyColors(image.pixels);
-        std::cout << "drawing image..." << std::endl;
         
         image.draw();
-        
-        std::cout << "finished drawing image." << std::endl;
     }
     else scene.draw();
     

@@ -78,29 +78,6 @@ void RTObj::init(const char * filename){
     }
     std::cout << "done." << std::endl;
     
-    // setting up buffers
-//    std::cout << "Setting up buffers...";
-//    glGenVertexArrays(1, &vao );
-//    buffers.resize(3);
-//    glGenBuffers(3, buffers.data());
-//    glBindVertexArray(vao);
-//
-//    // 0th attribute: position
-//    glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-//    glBufferData(GL_ARRAY_BUFFER, n*sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(0);
-//    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0,(void*)0);
-//
-//    // 1st attribute: normal
-//    glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-//    glBufferData(GL_ARRAY_BUFFER, n*sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
-//    glEnableVertexAttribArray(1);
-//    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,0,(void*)0);
-//
-//    // indices
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[2]);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, n*sizeof(indices[0]), &indices[0], GL_STATIC_DRAW);
-    
     //set up list of triangles
     for (unsigned int i=0; i<n; i++) {
         Triangle t;
@@ -119,8 +96,6 @@ void RTObj::init(const char * filename){
     }
     
     count = n;
-//    glBindVertexArray(0);
-//    std::cout << "done." << std::endl;
 }
 
 

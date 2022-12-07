@@ -10,10 +10,8 @@ void RTScene::init(void){
     // Create a geometry palette
     geometry["cube"] = new RTCube;
     geometry["teapot"] = new RTObj;
-//    geometry["bunny"] = new Obj;
     geometry["cube"] -> init();
     geometry["teapot"] -> init("models/teapot.obj");
-//    geometry["bunny"] -> init("models/bunny.obj");
     
     // Create a material palette
     material["wood"] = new Material;
@@ -63,9 +61,6 @@ void RTScene::init(void){
     model["table piece"] = new RTModel;
     model["table piece"] -> geometry = geometry["cube"];
     model["table piece"] -> material = material["wood"];
-//    model["bunny"] = new RTModel;
-//    model["bunny"] -> geometry = geometry["bunny"];
-//    model["bunny"] -> material = material["turquoise"];
     model["bulb"] = new RTModel;
     model["bulb"] -> geometry = geometry["cube"];
     model["bulb"] -> material = material["bulb"];
@@ -85,8 +80,6 @@ void RTScene::init(void){
     node["table leg"] = new RTNode;
     node["teapot1"] = new RTNode;
     node["teapot2"] = new RTNode;
-//    node["bunny"] = new RTNode;
-    
     
     node["table"] -> childnodes.push_back( node["table top"] );
     node["table"] -> childtransforms.push_back( translate(vec3(0.0f,1.2f,0.0f)) );
@@ -114,13 +107,8 @@ void RTScene::init(void){
     node["teapot2"] -> models.push_back( model["teapot2"] );
     node["teapot2"] -> modeltransforms.push_back( scale(vec3(1.0f,1.5f,1.0f)) * scale(vec3(0.5f)) );
     
-//    node["bunny"] -> models.push_back( model["bunny"] );
-//    node["bunny"] -> modeltransforms.push_back( scale(vec3(0.8f)) * translate(vec3(0.0f,1.0f,0.0f)) );
-    
     node["world"] -> childnodes.push_back( node["table"] );
     node["world"] -> childtransforms.push_back( mat4(1.0f) );
-//    node["world"] -> childnodes.push_back( node["bunny"] );
-//    node["world"] -> childtransforms.push_back( translate(vec3(-1.8f,0.0f,0.0f)) * rotate( 90.0f*float(M_PI)/180.0f, vec3(0.0f, 1.0f, 0.0f) ));
 //    node["world"] -> models.push_back( model["bulb"] );
 //    node["world"] -> modeltransforms.push_back( translate(vec3(0.0f,2.0f,0.0f))*scale(vec3(0.1f)) );
     

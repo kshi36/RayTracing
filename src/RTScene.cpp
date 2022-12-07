@@ -14,7 +14,6 @@ Scene.cpp contains the implementation of the draw command
 using namespace glm;
 
 void RTScene::buildTriangleSoup() {
-    // Pre-draw sequence: assign uniforms that are the same for all Geometry::draw call.  These uniforms include the camera view, proj, and the lights.  These uniform do not include modelview and material parameters.
     camera -> computeMatrices();
     
     // reset triangle_soup
@@ -60,7 +59,6 @@ void RTScene::buildTriangleSoup() {
             //add triangles to triangle soup (transformed)
             std::vector<Triangle> triangles = ( cur -> models[i] ) -> geometry -> elements;
                                     
-            //TODO: Test! skip shaders!
             //transform all triangles from model coordinate to same coordinate system
             for (Triangle tri : triangles) {
                 //in world coordinate system
@@ -71,9 +69,7 @@ void RTScene::buildTriangleSoup() {
 
                 for (size_t j=0; j<3; j++) {
                     vec4 tempPos = tempMatrix * vec4(tri.P[j], 1.0f);
-                    
-//                    std::cout << "tempPos[" << j << "]: " << glm::to_string(tempPos) << std::endl;
-                    
+                                        
                     //transform positions
                     tri.P[j] = vec3(tempPos[0]/tempPos[3], tempPos[1]/tempPos[3], tempPos[2]/tempPos[3]);
 
@@ -87,7 +83,6 @@ void RTScene::buildTriangleSoup() {
                 triangle_soup.push_back(tri);
             }
             
-//            std::cout << "Finished adding triangles for model " << i << std::endl;
         }
         
         // Continue the DFS: put all the child nodes of the current node in the stack
