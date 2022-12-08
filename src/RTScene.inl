@@ -35,7 +35,7 @@ void RTScene::init(void){
     material["turquoise"] = new Material;
     material["turquoise"] -> ambient = vec4(0.1f, 0.2f, 0.17f, 1.0f);
     material["turquoise"] -> diffuse = vec4(0.2f, 0.375f, 0.35f, 1.0f);
-    material["turquoise"] -> specular = vec4(0.3f, 0.3f, 0.3f, 1.0f);
+    material["turquoise"] -> specular = vec4(0.9f, 0.9f, 0.9f, 1.0f);
     material["turquoise"] -> shininess = 100.0f;
     
     material["pink"] = new Material;
@@ -44,12 +44,12 @@ void RTScene::init(void){
     material["pink"] -> specular = vec4(0.9f, 0.6f, 0.6f, 1.0f);
     material["pink"] -> shininess = 100.0f;
     
-    material["bulb"] = new Material;
-    material["bulb"] -> ambient = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    material["bulb"] -> diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    material["bulb"] -> specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    material["bulb"] -> emision = vec4(1.0f,0.2f,0.1f,1.0f);
-    material["bulb"] -> shininess = 200.0f;
+//    material["bulb"] = new Material;
+//    material["bulb"] -> ambient = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+//    material["bulb"] -> diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+//    material["bulb"] -> specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+//    material["bulb"] -> emision = vec4(1.0f,0.2f,0.1f,1.0f);
+//    material["bulb"] -> shininess = 200.0f;
     
     // Create a model palette
     model["teapot1"] = new RTModel;
@@ -61,18 +61,19 @@ void RTScene::init(void){
     model["table piece"] = new RTModel;
     model["table piece"] -> geometry = geometry["cube"];
     model["table piece"] -> material = material["wood"];
-    model["bulb"] = new RTModel;
-    model["bulb"] -> geometry = geometry["cube"];
-    model["bulb"] -> material = material["bulb"];
+//    model["bulb"] = new RTModel;
+//    model["bulb"] -> geometry = geometry["cube"];
+//    model["bulb"] -> material = material["bulb"];
     
     // Create a light palette
     light["sun"] = new Light;
-    light["sun"] -> position = vec4(3.0f,2.0f,1.0f,0.0f);
-    light["sun"] -> color = 1.0f*vec4(1.0f,1.0f,1.0f,1.0f);
+//    light["sun"] -> position = vec4(3.0f,2.0f,1.0f,0.0f);
+    light["sun"] -> position = vec4(0.0f, 2.0f, 1.0f,0.0f); //behind camera
+    light["sun"] -> color = vec4(1.0f,1.0f,1.0f,1.0f);
     
-    light["bulb"] = new Light;
-    light["bulb"] -> position = vec4(0.0f,2.0f,0.0f,0.0f);
-    light["bulb"] -> color = 1.5f * vec4(1.0f,0.2f,0.1f,1.0f);
+//    light["bulb"] = new Light;
+//    light["bulb"] -> position = vec4(0.0f,2.0f,0.0f,0.0f);
+//    light["bulb"] -> color = 1.5f * vec4(1.0f,0.2f,0.1f,1.0f);
     
     // Build the scene graph
     node["table"] = new RTNode;

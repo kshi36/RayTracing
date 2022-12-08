@@ -109,6 +109,7 @@ glm::vec3 RayTracer::FindColor(Intersection &hit, RTScene &scene, int recursion_
 
     //intersection doesn't exist (infinity)
     if (fabs(hit.dist-MY_INFINITY) < 0.1f) {
+//        return glm::vec3(1.0f, 1.0f, 1.0f);
         return glm::vec3(0.1f, 0.2f, 0.3f); //background color
     }
 
@@ -146,7 +147,9 @@ glm::vec3 RayTracer::FindColor(Intersection &hit, RTScene &scene, int recursion_
         //generate mirror-reflected ray
         Ray ray2;
         ray2.p0 = hit.P + 0.01f * hit.N;    //jitter hit pos along unit normal of hit triangle
-        ray2.dir = glm::normalize((2.0f*glm::dot(hit.N, hit.V)*hit.N - hit.V) - ray2.p0);   //mirror reflection direction
+//        ray2.p0 = hit.P + 0.0001f * hit.N;    //jitter hit pos along unit normal of hit triangle
+//        ray2.p0 = hit.P + 0.00000000001f * hit.N;    //jitter hit pos along unit normal of hit triangle
+        ray2.dir = glm::normalize(2.0f*glm::dot(hit.N, hit.V)*hit.N - hit.V);   //mirror reflection direction
 
         Intersection hit2 = Intersect( ray2, scene );
 
@@ -154,6 +157,10 @@ glm::vec3 RayTracer::FindColor(Intersection &hit, RTScene &scene, int recursion_
         if (!(fabs(hit2.dist-MY_INFINITY) < 0.1f)) {
             fragColor += (glm::vec3(hit.triangle->material->specular) * FindColor( hit2, scene, recursion_depth-1 ));
         }
+//        else {
+////            fragColor += (glm::vec3(hit.triangle->material->specular) * glm::vec3((light.second)->color));
+//            return glm::vec3(0.0f,1.0f,0.0f);   //green
+//        }
     }
     return glm::vec3(fragColor);
 }
